@@ -1,36 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gable</title>
-    <style>
-        body {
-            background: #111;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        h1 {
-            color: #00bfff;
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Lucky Spin</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Welcome to Gable</h1>
+<h1>🎰 Lucky Spin</h1>
 
-<p>My GitHub Pages website!</p>
+<p>Coins: <span id="coins">100</span></p>
 
-<button onclick="alert('Hello!')">Click Me</button>
+<button onclick="spin()">Spin ($10)</button>
+
+<p id="result"></p>
+
+<script src="script.js"></script>
 
 </body>
 </html>
