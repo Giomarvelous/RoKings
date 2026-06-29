@@ -1,1 +1,84 @@
-k
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RoKings Gamble</title>
+<style>
+    body {
+        background: #121212;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 80px;
+    }
+
+    h1 {
+        color: gold;
+        font-size: 40px;
+    }
+
+    .box {
+        font-size: 60px;
+        margin: 20px;
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background: gold;
+        color: black;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        background: orange;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>🎰 RoKings Slots</h1>
+
+<p>Coins: <span id="coins">100</span></p>
+
+<div class="box" id="slots">❓ ❓ ❓</div>
+
+<button onclick="spin()">SPIN (10 coins)</button>
+
+<p id="result"></p>
+
+<script>
+let coins = 100;
+
+function spin() {
+    if (coins < 10) {
+        document.getElementById("result").innerText = "No coins left!";
+        return;
+    }
+
+    coins -= 10;
+
+    let symbols = ["🍒","🍋","🍉","💎","7️⃣"];
+    let s1 = symbols[Math.floor(Math.random()*symbols.length)];
+    let s2 = symbols[Math.floor(Math.random()*symbols.length)];
+    let s3 = symbols[Math.floor(Math.random()*symbols.length)];
+
+    document.getElementById("slots").innerText = `${s1} ${s2} ${s3}`;
+
+    if (s1 === s2 && s2 === s3) {
+        coins += 50;
+        document.getElementById("result").innerText = "JACKPOT! +50 coins 🎉";
+    } else {
+        document.getElementById("result").innerText = "Try again!";
+    }
+
+    document.getElementById("coins").innerText = coins;
+}
+</script>
+
+</body>
+</html>
