@@ -1,82 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>RoKings Gamble</title>
+<title>RoKings Mines</title>
+
 <style>
-    body {
-        background: #121212;
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding-top: 80px;
-    }
+body {
+    background: #0f0f0f;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+}
 
-    h1 {
-        color: gold;
-        font-size: 40px;
-    }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
 
-    .box {
-        font-size: 60px;
-        margin: 20px;
-    }
+.tile {
+    width: 60px;
+    height: 60px;
+    background: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 8px;
+}
 
-    button {
-        padding: 12px 25px;
-        font-size: 18px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        background: gold;
-        color: black;
-        margin-top: 20px;
-    }
-
-    button:hover {
-        background: orange;
-    }
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🎰 RoKings Slots</h1>
+<h1>💣 Mines Game</h1>
 
-<p>Coins: <span id="coins">100</span></p>
+<p>Balance: <span id="balance">0</span></p>
 
-<div class="box" id="slots">❓ ❓ ❓</div>
+<button onclick="startGame()">Start Game (bet 10)</button>
+<button onclick="cashOut()">Cash Out</button>
 
-<button onclick="spin()">SPIN (10 coins)</button>
+<div class="grid" id="grid"></div>
 
-<p id="result"></p>
+<hr>
+
+<h3>Admin Panel</h3>
+<input type="password" id="adminPass" placeholder="password">
+<input type="number" id="amount" placeholder="amount">
+<button onclick="addBalance()">Add Balance</button>
 
 <script>
-let coins = 100;
+let balance = Number(localStorage.getItem("balance") || 100);
+let gameActive = false;
+let minePositions = [];
+let bet = 10;
+let currentWin = 0;
 
-function spin() {
-    if (coins < 10) {
-        document.getElementById("result").innerText = "No coins left!";
+document.getElementById("balance").innerText = balance;
+
+function save() {
+    localStorage.setItem("balance", balance);
+    document.getElementById("balance").innerText = balance;
+}
+
+function startGame() {
+    if (balance < bet) {
+        alert("Not enough coins!");
         return;
     }
 
-    coins -= 10;
+    balance -= bet;
+    save();
 
-    let symbols = ["🍒","🍋","🍉","💎","7️⃣"];
-    let s1 = symbols[Math.floor(Math.random()*symbols.length)];
-    let s2 = symbols[Math.floor(Math.random()*symbols.length)];
-    let s3 = symbols[Math.floor(Math.random()*symbols.length)];
+    gameActive = true;
+    currentWin = 0;
 
-    document.getElementById("slots").innerText = `${s1} ${s2} ${s3}`;
-
-    if (s1 === s2 && s2 === s3) {
-        coins += 50;
-        document.getElementById("result").innerText = "JACKPOT! +50 coins 🎉";
-    } else {
-        document.getElementById("result").innerText = "Try again!";
+    minePositions = [];
+    while (minePositions.length < 5) {
+        let r = Math.floor(Math.random() * 25);
+        if (!minePositions.includes(r)) minePositions.push(r);
     }
 
-    document.getElementById("coins").innerText = coins;
+    renderGrid();
+}
+
+function renderGrid() {
+    let grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    for (let i = 0; i < 25; i++) {
+        let tile = document.createElement("div");
+        tile.className = "tile";
+
+        tile.onclick = () => clickTile(i, tile);
+
+        grid.appendChild(tile);
+    }
+}
+
+function clickTile(i, tile) {
+    if (!gameActive) return;
+
+    if (minePositions.includes(i)) {
+        tile.innerText = "💣";
+        gameActive = false;
+        alert("You hit a mine!");
+        return;
+    }
+
+    tile.innerText = "💎";
+    currentWin += 2;
+}
+
+function cashOut() {
+    if (!gameActive) return;
+
+    balance += currentWin;
+    gameActive = false;
+    save();
+
+    alert("Cashed out: +" + currentWin);
+}
+
+function addBalance() {
+    let pass = document.getElementById("adminPass").value;
+    let amt = Number(document.getElementById("amount").value);
+
+    if (pass !== "admin123") {
+        alert("Wrong password");
+        return;
+    }
+
+    balance += amt;
+    save();
+
+    alert("Balance updated!");
 }
 </script>
 
